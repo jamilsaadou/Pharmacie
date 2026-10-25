@@ -1,0 +1,7 @@
+const units = ['zéro','un','deux','trois','quatre','cinq','six','sept','huit','neuf','dix','onze','douze','treize','quatorze','quinze','seize'];
+function underHundred(n: number): string { if(n<=16) return units[n]; if(n<20) return 'dix-'+units[n-10]; if(n<70) { const tens=['','','vingt','trente','quarante','cinquante','soixante'][Math.floor(n/10)], r=n%10; return tens+(r===1?' et un':r?'-'+units[r]:''); } if(n<80) return 'soixante'+(n===71?' et onze':'-'+underHundred(n-60)); return 'quatre-vingt'+(n===80?'s':'-'+underHundred(n-80)); }
+function underThousand(n: number): string { if(n<100) return underHundred(n); const h=Math.floor(n/100),r=n%100; return (h===1?'cent':units[h]+' cent'+(!r?'s':''))+(r?' '+underHundred(r):''); }
+export function amountInWords(amount: number): string {
+  const n=Math.abs(Math.round(amount)); if(!Number.isSafeInteger(n)||n>=1e12) throw new Error('Montant hors limite pour la conversion en lettres.'); if(!n) return units[0];
+  let rest=n; const parts:string[]=[]; for(const [value,label] of [[1e9,'milliard'],[1e6,'million'],[1000,'mille']] as const) { const count=Math.floor(rest/value); if(count) { parts.push(value===1000?(count===1?'mille':underThousand(count).replace(/cents$/,'cent').replace(/vingts$/,'vingt')+' mille'):underThousand(count)+' '+label+(count>1?'s':'')); rest%=value; } } if(rest) parts.push(underThousand(rest)); return parts.join(' ');
+}

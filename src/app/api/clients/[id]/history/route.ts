@@ -1,0 +1,12 @@
+import{NextRequest,NextResponse}from'next/server';import{prisma}from'@/lib/prisma';import{requireUser}from'@/lib/session';import{apiError}from'@/lib/api-error';import{clientHistoryRow,dayBoundary,summarizeClientGroups}from'@/lib/client-history';
+export async function GET(request:NextRequest,{params}:{params:Promise<{id:string}>}){try{
+ await requireUser(false,'clients');const{id}=await params;const p=request.nextUrl.searchParams;const client=await prisma.client.findUnique({where:{id},include:{assures:{include:{assurance:true}}}});if(!client)return NextResponse.json({error:'Client introuvable.'},{status:404});
+ const page=Math.max(1,Number(p.get('page'))||1),limit=Math.max(1,Math.min(200,Number(p.get('limit'))||15));if(!Number.isInteger(page)||!Number.isInteger(limit))throw Error('Pagination invalide.');
+ const where:any={clientId:id};const q=p.get('q')?.trim();if(q)where.OR=[{numeroFacture:{contains:q,mode:'insensitive'}},{items:{some:{OR:[{libelle:{contains:q,mode:'insensitive'}},{medicament:{nom:{contains:q,mode:'insensitive'}}}]}}}];
+ const type=p.get('type');if(type==='ventes')where.typeFacture={in:['FV','EV']};else if(type==='avoirs')where.typeFacture={in:['FA','EA']};
+ if(p.get('from')||p.get('to')){where.date={};if(p.get('from'))where.date.gte=dayBoundary(p.get('from')!);if(p.get('to'))where.date.lt=dayBoundary(p.get('to')!,true);if(where.date.gte&&where.date.lt&&where.date.gte>=where.date.lt)throw Error('La date de fin doit suivre la date de début.');}
+ const status=p.get('status');if(status==='valides'){where.statut='terminee';where.factureESECeF={statut:'certifiee'};}else if(status==='attente')where.statut='en_cours';else if(status==='annules')where.statut='annulee';
+ const[count,groups,pending]=await Promise.all([prisma.vente.count({where}),prisma.vente.groupBy({by:['typeFacture'],where:{clientId:id,statut:'terminee',factureESECeF:{statut:'certifiee'}},_sum:{total:true},_count:{_all:true},_max:{date:true}}),prisma.vente.count({where:{clientId:id,statut:'en_cours'}})]);
+ const actualPage=Math.min(page,Math.max(1,Math.ceil(count/limit)));const rows=await prisma.vente.findMany({where,include:{factureESECeF:true,items:{include:{medicament:{select:{nom:true}}}}},orderBy:[{date:'desc'},{id:'desc'}],skip:(actualPage-1)*limit,take:limit});
+ return NextResponse.json({client,summary:{...summarizeClientGroups(groups),pending},items:rows.map(clientHistoryRow),count,page:actualPage,limit,pages:Math.max(1,Math.ceil(count/limit))},{headers:{'Cache-Control':'no-store'}});
+}catch(error){return apiError(error);}}

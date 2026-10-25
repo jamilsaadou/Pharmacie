@@ -1,0 +1,7 @@
+'use client';
+import{ReactFlow,Background,Controls,MarkerType,type Node,type Edge}from'@xyflow/react';import'@xyflow/react/dist/style.css';
+export default function ClientHistoryFlow({items,onSelect}:{items:any[];onSelect:(id:string)=>void}){
+ const chronological=[...items].reverse();const nodes:Node[]=chronological.map((item,index)=>({id:item.id,position:{x:(index%4)*300,y:Math.floor(index/4)*170},data:{label:<div className="text-left"><strong>{item.credit?'Avoir':'Vente'} · {new Date(item.date).toLocaleDateString('fr-FR')}</strong><p className="my-2 break-all text-xs">{item.number}</p><b>{item.amount.toLocaleString('fr-FR')} FCFA</b><small className="mt-1 block">{item.certified?'Certifiée':item.certification}</small></div>},style:{width:260,borderRadius:14,padding:16,borderColor:item.credit?'#cb9e67':'#6d9e84',background:item.credit?'#fff8ee':'#f2faf5'}}));
+ const edges:Edge[]=[];for(const item of items){if(!item.credit)continue;const original=items.find(o=>o.factureId===item.originalId||o.fiscalReference===item.originalReference);if(original)edges.push({id:original.id+'-'+item.id,source:original.id,target:item.id,label:'Avoir lié',type:'smoothstep',markerEnd:{type:MarkerType.ArrowClosed},style:{stroke:'#a86c31'}});}
+ return <div className="h-[460px] overflow-hidden rounded-xl border border-slate-200"><ReactFlow nodes={nodes} edges={edges} fitView nodesDraggable={false} nodesConnectable={false} onNodeClick={(_,node)=>onSelect(node.id)} minZoom={.2} maxZoom={1.5}><Background/><Controls showInteractive={false}/></ReactFlow></div>;
+}

@@ -1,0 +1,596 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Medicament {
+  id                String              @id @default(uuid())
+  nom               String
+  description       String              @db.Text
+  prix              Float
+  quantiteStock     Int
+  seuilAlerte       Int
+  dateExpiration    DateTime
+  categorie         String
+  fournisseur       String
+  codeBarres        String?
+  dosage            String?
+  forme             String              // 'comprimé' | 'gélule' | 'sirop' | 'injection' | 'pommade' | 'autre'
+  prescription      Boolean             @default(false)
+  photo             String?             @db.Text
+  groupeTaxation    String              @default("B") // 'A' (exonéré 0%) | 'B' (TVA 19%)
+  dateAjout         DateTime            @default(now())
+  dateModification  DateTime            @updatedAt
+  
+  lots              LotStock[]
+  conditionnements  Conditionnement[]
+  // Relations
+  itemsVente        ItemVente[]
+  itemsCommande     ItemCommande[]
+  medicamentsRayon  MedicamentRayon[]
+  transfertsRayon   TransfertRayon[]
+  alertes           Alerte[]
+
+  @@index([nom])
+  @@index([categorie])
+  @@index([fournisseur])
+}
+
+model Client {
+  id              String    @id @default(uuid())
+  nom             String
+  prenom          String
+  nif             String?
+  telephone       String?
+  email           String?   @unique
+  adresse         String?   @db.Text
+  dateNaissance   DateTime?
+  numeroSecu      String?
+  dateInscription DateTime  @default(now())
+  
+  // Relations
+  ventes          Vente[]
+  assures         Assure[]
+
+  @@index([nom, prenom])
+  @@index([telephone])
+}
+
+model Vente {
+  cle String? @unique
+  empreinte String?
+  id                String    @id @default(uuid())
+  numeroFacture     String    @unique
+  date              DateTime  @default(now())
+  clientId          String?
+  sousTotal         Float
+  tva               Float
+  remise            Float
+  remiseType        String    @default("PERCENT")
+  remiseValeur      Float?
+  remiseMontant     Float?
+  total             Float
+  methodePaiement   String    // 'especes' | 'carte' | 'cheque' | 'virement'
+  statut            String    // 'en_cours' | 'terminee' | 'annulee'
+  vendeur           String
+  typeFacture       String    @default("FV") // 'FV' | 'FA' | 'EV' | 'EA' etc.
+  factureReference  String?   // Code SECeF/DGI de la facture originale (pour FA)
+  operateurId       String?
+  caisseId          String?
+  encaissement      Encaissement?
+  retourStock       Boolean   @default(false) // Si le stock a été réintégré (pour FA)
+  
+  // Relations
+  client          Client?              @relation(fields: [clientId], references: [id])
+  items           ItemVente[]
+  dossiers        DossierRemboursement[]
+  factureESECeF   FactureESECeF?
+
+  @@index([date])
+  @@index([clientId])
+  @@index([statut])
+}
+
+model ItemVente {
+  id             String  @id @default(uuid())
+  venteId        String
+  medicamentId   String?
+  libelle        String?
+  code           String?
+  quantite       Int
+  prixUnitaire   Float
+  remise         Float
+  remiseType     String  @default("PERCENT")
+  remiseValeur   Float?
+  remiseMontant  Float?
+  sousTotal      Float
+  groupeTaxation String  @default("B") // 'A' (exonéré 0%) | 'B' (TVA 19%)
+  
+  facteurStock   Int @default(1)
+  conditionnementId String?
+  allocations    AllocationStock[]
+  // Relations
+  vente          Vente      @relation(fields: [venteId], references: [id], onDelete: Cascade)
+  medicament     Medicament? @relation(fields: [medicamentId], references: [id])
+
+  @@index([venteId])
+  @@index([medicamentId])
+}
+
+model Fournisseur {
+  id        String   @id @default(uuid())
+  nom       String
+  contact   String
+  telephone String
+  email     String?
+  adresse   String   @db.Text
+  dateAjout DateTime @default(now())
+  
+  // Relations
+  commandes CommandeFournisseur[]
+
+  @@index([nom])
+}
+
+model CommandeFournisseur {
+  id              String    @id @default(uuid())
+  numeroCommande  String    @unique
+  fournisseurId   String
+  date            DateTime  @default(now())
+  statut          String    // 'en_attente' | 'confirmee' | 'livree' | 'annulee'
+  total           Float
+  dateReception   DateTime?
+  
+  receptions      ReceptionCommande[]
+  // Relations
+  fournisseur     Fournisseur    @relation(fields: [fournisseurId], references: [id])
+  items           ItemCommande[]
+
+  @@index([fournisseurId])
+  @@index([statut])
+}
+
+model ItemCommande {
+  id                 String               @id @default(uuid())
+  commandeId         String
+  medicamentId       String
+  quantiteCommandee  Int
+  quantiteRecue      Int?
+  prixUnitaire       Float
+  sousTotal          Float
+  
+  // Relations
+  commande           CommandeFournisseur @relation(fields: [commandeId], references: [id], onDelete: Cascade)
+  medicament         Medicament          @relation(fields: [medicamentId], references: [id])
+
+  @@index([commandeId])
+  @@index([medicamentId])
+}
+
+model Alerte {
+  id           String      @id @default(uuid())
+  type         String      // 'stock_faible' | 'expiration' | 'rupture'
+  medicamentId String
+  message      String      @db.Text
+  date         DateTime    @default(now())
+  lue          Boolean     @default(false)
+  priorite     String      // 'basse' | 'moyenne' | 'haute'
+  
+  // Relations
+  medicament   Medicament @relation(fields: [medicamentId], references: [id], onDelete: Cascade)
+
+  @@index([date])
+  @@index([lue])
+  @@index([medicamentId])
+}
+
+model Utilisateur {
+  id                     String   @id @default(uuid())
+  nom                    String
+  prenom                 String
+  email                  String   @unique
+  motDePasse             String
+  role                   String   // 'admin' | 'pharmacien' | 'vendeur'
+  dateCreation           DateTime @default(now())
+  actif                  Boolean  @default(true)
+  modulesSupplementaires String?  @db.Text // JSON array of ModuleId
+  ventesAccess           String?  @db.Text // JSON array of VentesAccessId
+  
+  // Relations
+  logs                   AuditLog[]
+
+  @@index([email])
+  @@index([role])
+}
+
+model AuditLog {
+  id           String    @id @default(uuid())
+  date         DateTime  @default(now())
+  module       String    // ModuleId | 'system'
+  action       String    // 'create' | 'update' | 'delete' | 'view' | 'export' | 'login' | 'logout' | 'transfer' | 'sale' | 'other'
+  userId       String?
+  userName     String?
+  targetType   String?
+  targetId     String?
+  message      String    @db.Text
+  details      String?   @db.Text // JSON
+  
+  // Relations
+  utilisateur  Utilisateur? @relation(fields: [userId], references: [id])
+
+  @@index([date])
+  @@index([module])
+  @@index([userId])
+}
+
+model Rayon {
+  id                String            @id @default(uuid())
+  nom               String
+  description       String            @db.Text
+  emplacement       String
+  capaciteMax       Int
+  dateCreation      DateTime          @default(now())
+  dateModification  DateTime          @updatedAt
+  
+  // Relations
+  medicamentsRayon  MedicamentRayon[]
+  transferts        TransfertRayon[]  @relation("RayonSource")
+  transfertsDestination TransfertRayon[] @relation("RayonDestination")
+
+  @@index([nom])
+}
+
+model MedicamentRayon {
+  id               String      @id @default(uuid())
+  medicamentId     String
+  rayonId          String
+  quantiteEnRayon  Int
+  quantiteMinimale Int
+  dateTransfert    DateTime    @default(now())
+  statut           String      // 'en_vente' | 'reserve' | 'expire'
+  
+  // Relations
+  medicament       Medicament @relation(fields: [medicamentId], references: [id], onDelete: Cascade)
+  rayon            Rayon      @relation(fields: [rayonId], references: [id], onDelete: Cascade)
+
+  @@index([medicamentId])
+  @@index([rayonId])
+  @@index([statut])
+}
+
+model TransfertRayon {
+  id                   String      @id @default(uuid())
+  medicamentId         String
+  rayonId              String
+  quantiteTransferee   Int
+  typeTransfert        String      // 'stock_vers_rayon' | 'rayon_vers_stock' | 'rayon_vers_rayon'
+  rayonDestinationId   String?
+  date                 DateTime    @default(now())
+  utilisateur          String
+  commentaire          String?     @db.Text
+  
+  // Relations
+  medicament           Medicament @relation(fields: [medicamentId], references: [id])
+  rayon                Rayon      @relation("RayonSource", fields: [rayonId], references: [id])
+  rayonDestination     Rayon?     @relation("RayonDestination", fields: [rayonDestinationId], references: [id])
+
+  @@index([medicamentId])
+  @@index([rayonId])
+  @@index([date])
+}
+
+model Assurance {
+  id             String              @id @default(uuid())
+  nom            String              @unique
+  code           String?
+  tauxCouverture Float               // en % de 0 à 100
+  telephone      String?
+  email          String?
+  adresse        String?             @db.Text
+  dateCreation   DateTime            @default(now())
+  
+  // Relations
+  assures        Assure[]
+  dossiers       DossierRemboursement[]
+
+  @@index([nom])
+}
+
+model Assure {
+  id             String              @id @default(uuid())
+  clientId       String
+  assuranceId    String
+  numeroPolice   String              @unique
+  tauxCouverture Float?              // Surclassement spécifique si différent de l'assurance
+  dateDebut      DateTime
+  dateFin        DateTime?
+  actif          Boolean             @default(true)
+  
+  // Relations
+  client         Client              @relation(fields: [clientId], references: [id], onDelete: Cascade)
+  assurance      Assurance           @relation(fields: [assuranceId], references: [id])
+  dossiers       DossierRemboursement[]
+
+  @@index([clientId])
+  @@index([assuranceId])
+  @@index([numeroPolice])
+}
+
+model DossierRemboursement {
+  id                String    @id @default(uuid())
+  reference         String    @unique
+  assuranceId       String
+  assureId          String?
+  venteId           String?
+  dateSoumission    DateTime  @default(now())
+  periodeDebut      DateTime
+  periodeFin        DateTime
+  montantTotal      Float
+  montantCouvert    Float
+  montantPayeClient Float
+  montantRembourse  Float
+  statut            String    // 'en_attente' | 'partiel' | 'rembourse'
+  commentaire       String?   @db.Text
+  
+  // Relations
+  assurance         Assurance @relation(fields: [assuranceId], references: [id])
+  assure            Assure?   @relation(fields: [assureId], references: [id])
+  vente             Vente?    @relation(fields: [venteId], references: [id])
+
+  @@index([assuranceId])
+  @@index([assureId])
+  @@index([venteId])
+  @@index([statut])
+  @@index([dateSoumission])
+}
+
+// ==================== MODÈLES E-SECEF ====================
+
+model ConfigurationESECeF {
+  id                 String    @id @default(uuid())
+  nif                String    // NIF du contribuable
+  nim                String    @unique // NIM de l'e-MCF
+  token              String    @db.Text // Token d'authentification (crypté)
+  environnement      String    // 'test' | 'production'
+  isf                String    // Identifiant du Système de Facturation d'Entreprise
+  actif              Boolean   @default(true)
+  tokenValidUntil    DateTime? // Date d'expiration du token (mise à jour dynamiquement)
+  lastTokenCheck     DateTime? // Dernière vérification du token
+  nomEtablissement   String    @default("")
+  adresse           String    @default("")
+  modePrix          String    @default("TTC")
+  delaiAttenteMs    Int       @default(30000)
+  catalogueFiscal   Json?
+  derniereSynchro   DateTime?
+  derniersCompteurs String?
+  dateConfiguration  DateTime  @default(now())
+  dateModification   DateTime  @updatedAt
+
+  // Relations
+  factures           FactureESECeF[]
+
+  @@index([nif])
+  @@index([actif])
+}
+
+// Les demandes API sont conservées même avant la création d'une vente.
+model DemandeCertification {
+  id              String   @id @default(uuid())
+  uid             String   @unique
+  configurationId String
+  statut          String   @default("soumise")
+  requete         Json
+  totaux          Json
+  securite        Json?
+  dateCreation    DateTime @default(now())
+  dateModification DateTime @updatedAt
+  @@index([statut, dateCreation])
+}
+
+model FactureESECeF {
+  id                     String    @id @default(uuid())
+  venteId                String    @unique // Référence à la vente (une vente = une facture)
+  numeroFacture          String
+  statut                 String    // 'en_attente' | 'soumise' | 'certifiee' | 'annulee' | 'erreur'
+
+  // Données de la requête
+  requestData            String    @db.Text // JSON de InvoiceRequestDataDto
+
+  // Données de la réponse
+  uid                    String?   // UID de la transaction
+  codeSECeFDGI           String?   // Code SECeF/DGI (29 caractères)
+  qrCode                 String?   @db.Text // Contenu du code QR
+  dateTimeCertification  DateTime?
+  counters               String?
+
+  // Erreurs
+  errorCode              String?
+  errorDescription       String?   @db.Text
+
+  // Métadonnées
+  configurationId        String
+  dateCreation           DateTime  @default(now())
+  dateModification       DateTime  @updatedAt
+  tentatives             Int       @default(0)
+  derniereTentative      DateTime?
+
+  // Relations
+  vente                  Vente     @relation(fields: [venteId], references: [id], onDelete: Cascade)
+  configuration          ConfigurationESECeF @relation(fields: [configurationId], references: [id])
+
+  @@index([venteId])
+  @@index([numeroFacture])
+  @@index([statut])
+  @@index([codeSECeFDGI])
+  @@index([configurationId])
+  @@index([dateCreation])
+}
+
+// ==================== PARAMÈTRES APPLICATION ====================
+
+model Parametres {
+  id                  String    @id @default(uuid())
+  cle                 String    @unique // Clé unique du paramètre
+  valeur              String    @db.Text // Valeur du paramètre (peut être JSON)
+  description         String?   @db.Text // Description du paramètre
+  categorie           String    @default("general") // 'general' | 'affichage' | 'facturation' | 'impression'
+  dateCreation        DateTime  @default(now())
+  dateModification    DateTime  @updatedAt
+
+  @@index([cle])
+  @@index([categorie])
+}
+
+
+model LotStock {
+  id String @id @default(uuid())
+  medicamentId String
+  numero String?
+  dateExpiration DateTime
+  quantite Int @default(0)
+  quantiteReservee Int @default(0)
+  statut String @default("a_qualifier")
+  rayonId String?
+  fournisseurId String?
+  provenance String @default("manuel")
+  prixAchat Float?
+  dateCreation DateTime @default(now())
+  dateModification DateTime @updatedAt
+  medicament Medicament @relation(fields:[medicamentId],references:[id])
+  allocations AllocationStock[]
+  mouvements MouvementStock[]
+  inventaires LigneInventaire[]
+  @@index([medicamentId,statut,dateExpiration])
+  @@index([rayonId])
+}
+model AllocationStock {
+  id String @id @default(uuid())
+  itemVenteId String
+  lotId String
+  quantite Int
+  quantiteRetournee Int @default(0)
+  origineItemId String?
+  origineAllocationId String?
+  etat String @default("reservee")
+  item ItemVente @relation(fields:[itemVenteId],references:[id])
+  lot LotStock @relation(fields:[lotId],references:[id])
+  @@index([itemVenteId,etat])
+}
+model MouvementStock {
+  id String @id @default(uuid())
+  lotId String
+  type String
+  quantite Int
+  avant Int
+  apres Int
+  utilisateurId String?
+  utilisateur String
+  motif String
+  documentId String?
+  destinationLotId String?
+  date DateTime @default(now())
+  lot LotStock @relation(fields:[lotId],references:[id])
+  @@index([lotId,date])
+  @@index([documentId])
+}
+model ReceptionCommande {
+  id String @id @default(uuid())
+  cle String @unique
+  commandeId String
+  date DateTime @default(now())
+  utilisateur String
+  lignes Json
+  commande CommandeFournisseur @relation(fields:[commandeId],references:[id])
+}
+model Inventaire {
+  id String @id @default(uuid())
+  reference String @unique
+  statut String @default("ouvert")
+  utilisateur String
+  utilisateurId String
+  dateCreation DateTime @default(now())
+  dateValidation DateTime?
+  lignes LigneInventaire[]
+}
+model LigneInventaire {
+  id String @id @default(uuid())
+  inventaireId String
+  lotId String
+  theorique Int
+  reservee Int
+  comptee Int?
+  motif String?
+  inventaire Inventaire @relation(fields:[inventaireId],references:[id])
+  lot LotStock @relation(fields:[lotId],references:[id])
+  @@unique([inventaireId,lotId])
+}
+model Conditionnement {
+  id String @id @default(uuid())
+  medicamentId String
+  nom String
+  facteur Int
+  codeBarres String? @unique
+  prixVente Float
+  actif Boolean @default(true)
+  medicament Medicament @relation(fields:[medicamentId],references:[id])
+  @@unique([medicamentId,nom])
+}
+model SessionCaisse {
+  id String @id @default(uuid())
+  utilisateurId String
+  utilisateur String
+  statut String @default("ouverte")
+  fondOuverture Int
+  montantCompte Int?
+  montantAttendu Int?
+  ecart Int?
+  motifEcart String?
+  dateOuverture DateTime @default(now())
+  dateCloture DateTime?
+  encaissements Encaissement[]
+  mouvements MouvementCaisse[]
+  @@index([utilisateurId,statut])
+}
+model Encaissement {
+  id String @id @default(uuid())
+  venteId String @unique
+  caisseId String?
+  mode String
+  montant Int
+  date DateTime @default(now())
+  vente Vente @relation(fields:[venteId],references:[id])
+  caisse SessionCaisse? @relation(fields:[caisseId],references:[id])
+}
+model MouvementCaisse {
+  id String @id @default(uuid())
+  cle String @unique
+  caisseId String
+  type String
+  montant Int
+  motif String
+  date DateTime @default(now())
+  caisse SessionCaisse @relation(fields:[caisseId],references:[id])
+}
+
+// ==================== RAPPORTS FISCAUX (SFE) ====================
+// Clôtures Z : chaque Z borne une période et sert de point de départ au Z et au X quotidien suivants.
+model RapportZ {
+  id              String   @id @default(uuid())
+  numero          Int                       // Séquence Z (1, 2, 3…) par e-MCF
+  configurationId String?                   // e-MCF (NIM) concerné
+  debut           DateTime                  // Début de la période (fin du Z précédent)
+  fin             DateTime                  // Date/heure de clôture
+  genereePar      String                    // Opérateur ayant clôturé
+  donnees         Json                      // Instantané complet du rapport Z (totaux officiels agrégés)
+  dateCreation    DateTime @default(now())
+
+  @@unique([configurationId, numero])
+  @@index([fin])
+}

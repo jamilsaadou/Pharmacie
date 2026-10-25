@@ -1,0 +1,3 @@
+require('@next/env').loadEnvConfig(process.cwd());
+const {PrismaClient}=require('@prisma/client');const prisma=new PrismaClient();
+(async()=>{let text='';for await(const c of process.stdin)text+=c;const fields=JSON.parse(text);await prisma.$transaction(Object.entries(fields).map(([key,value])=>prisma.parametres.upsert({where:{cle:'entreprise.'+key},create:{cle:'entreprise.'+key,valeur:value,categorie:'general'},update:{valeur:value}})));console.log('Informations de l’entreprise enregistrées.');})().catch(()=>{console.error('Enregistrement de l’identité non achevé.');process.exitCode=1;}).finally(()=>prisma.$disconnect());
