@@ -95,6 +95,7 @@ model Vente {
 
   @@index([date])
   @@index([clientId])
+  @@index([operateurId, date])
   @@index([statut])
 }
 
@@ -204,6 +205,7 @@ model Utilisateur {
   ventesAccess           String?  @db.Text // JSON array of VentesAccessId
   
   // Relations
+  sessionsMobile         SessionMobile[]
   logs                   AuditLog[]
 
   @@index([email])
@@ -593,4 +595,18 @@ model RapportZ {
 
   @@unique([configurationId, numero])
   @@index([fin])
+}
+
+// Opaque device tokens: only SHA-256 digests are persisted.
+model SessionMobile {
+  id String @id @default(uuid())
+  utilisateurId String
+  tokenHash String @unique
+  credentialHash String
+  appareil String
+  expiresAt DateTime
+  revokedAt DateTime?
+  dateCreation DateTime @default(now())
+  utilisateur Utilisateur @relation(fields: [utilisateurId], references: [id], onDelete: Cascade)
+  @@index([utilisateurId, expiresAt])
 }

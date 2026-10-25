@@ -1,4 +1,5 @@
 import { createHmac, timingSafeEqual } from 'node:crypto';
+import { mobileContext } from '@/lib/mobile/context';
 import { cookies } from 'next/headers';
 import { prisma } from '@/lib/prisma';
 
@@ -9,7 +10,7 @@ export function signSession(userId: string, passwordHash: string) {
   const payload = Buffer.from(JSON.stringify({ userId, credential: createHmac('sha256', key).update(passwordHash).digest('base64url'), expires: Date.now() + 8 * 3600000 })).toString('base64url');
   return payload + '.' + createHmac('sha256', key).update(payload).digest('base64url');
 }
-export async function requireUser(admin = false, module?: string) {
+async function cookieUser() {
   const value = (await cookies()).get(SESSION_COOKIE)?.value;
   if(!value||value.length>2048||value.split('.').length!==2)throw new Error('SESSION_REQUIRED');
   const [payload, signature] = value.split('.');
@@ -24,6 +25,10 @@ export async function requireUser(admin = false, module?: string) {
   if (!user?.actif) throw new Error('SESSION_REQUIRED');
   const credential=createHmac('sha256',process.env.SESSION_SECRET).update(user.motDePasse).digest('base64url');
   if(data.credential!==credential)throw new Error('SESSION_REQUIRED');
+  return user;
+}
+export async function requireUser(admin = false, module?: string) {
+  const user = mobileContext.getStore() ?? await cookieUser();
   if (admin && user.role !== 'admin') throw new Error('ADMIN_REQUIRED');
   if (module && user.role !== 'admin') {
     const allowed: Record<string, string[]> = { pharmacien: ['caisse','stock','rayons','ventes','clients','commandes','fournisseurs','assurances','remboursements','statistiques','rapports','alertes','logs'], vendeur: ['caisse','ventes','clients','alertes'] };

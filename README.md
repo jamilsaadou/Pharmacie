@@ -59,3 +59,7 @@ L’application est maintenue en local ; aucun déploiement public n’est réal
 L’analyse détaillée, les règles métier et les limites restantes figurent dans [docs/ANALYSE_FONCTIONNELLE.md](docs/ANALYSE_FONCTIONNELLE.md).
 
 Les avoirs se créent désormais depuis une vente certifiée sélectionnée : client, prix, remises et taxes historiques sont repris et le solde créditable est contrôlé. Les résultats des essais DGI, leurs limites et leurs pièces de preuve sont dans [output/validation-dgi-test/RAPPORT_TESTS.md](output/validation-dgi-test/RAPPORT_TESTS.md).
+
+## API mobile Flutter
+
+Les API versionnées `/api/mobile/v1` donnent accès au stock, aux ventes certifiées et à la caisse personnelle des agents. Voir le [guide Flutter](docs/API_MOBILE_FLUTTER.md), le [contrat OpenAPI](docs/openapi-mobile-v1.json) et le [client Dart](docs/flutter/pharmacare_api.dart). Appliquer les migrations avec `npm run db:migrate` avant utilisation.

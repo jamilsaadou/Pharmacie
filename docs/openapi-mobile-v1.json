@@ -1,0 +1,2958 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "PharmaCare Mobile API",
+    "version": "1.0.0",
+    "description": "API agents de caisse Flutter Android/iOS. Stock pharmacie commun ; ventes et caisses strictement personnelles. FCFA sans facteur 100. Voir API_MOBILE_FLUTTER.md pour reprises réseau et certification."
+  },
+  "servers": [
+    {
+      "url": "/api/mobile/v1"
+    }
+  ],
+  "security": [
+    {
+      "MobileBearer": []
+    }
+  ],
+  "paths": {
+    "/auth/login": {
+      "post": {
+        "operationId": "login",
+        "summary": "Connexion mobile (huit heures)",
+        "responses": {
+          "200": {
+            "description": "Succès",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Token"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Erreur (voir code et message)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Erreur (voir code et message)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Erreur (voir code et message)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Erreur (voir code et message)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Erreur (voir code et message)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "413": {
+            "description": "Erreur (voir code et message)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "415": {
+            "description": "Erreur (voir code et message)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Erreur (voir code et message)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Erreur (voir code et message)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Login"
+              }
+            }
+          }
+        },
+        "security": []
+      }
+    },
+    "/auth/logout": {
+      "post": {
+        "operationId": "logout",
+        "summary": "Révoquer le jeton courant",
+        "responses": {
+          "200": {
+            "description": "Succès",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Erreur (voir code et message)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Erreur (voir code et message)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Erreur (voir code et message)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Erreur (voir code et message)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Erreur (voir code et message)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "413": {
+            "description": "Erreur (voir code et message)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "415": {
+            "description": "Erreur (voir code et message)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Erreur (voir code et message)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Erreur (voir code et message)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/me": {
+      "get": {
+        "operationId": "getMe",
+        "summary": "Profil personnel",
+        "responses": {
+          "200": {
+            "description": "Succès",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Me"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Erreur (voir code et message)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Erreur (voir code et message)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Erreur (voir code et message)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Erreur (voir code et message)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Erreur (voir code et message)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "413": {
+            "description": "Erreur (voir code et message)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "415": {
+            "description": "Erreur (voir code et message)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Erreur (voir code et message)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Erreur (voir code et message)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/me/situation": {
+      "get": {
+        "operationId": "getMySituation",
+        "summary": "Ventes et encaissements personnels",
+        "responses": {
+          "200": {
+            "description": "Succès",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Situation"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Erreur (voir code et message)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Erreur (voir code et message)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Erreur (voir code et message)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Erreur (voir code et message)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Erreur (voir code et message)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "413": {
+            "description": "Erreur (voir code et message)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "415": {
+            "description": "Erreur (voir code et message)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Erreur (voir code et message)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Erreur (voir code et message)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "from",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            },
+            "description": "Borne incluse ; fuseau requis."
+          },
+          {
+            "name": "to",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            },
+            "description": "Borne exclue ; fuseau requis."
+          }
+        ]
+      }
+    },
+    "/stock": {
+      "get": {
+        "operationId": "getStock",
+        "summary": "Stock commun vendable et conditionnements actifs",
+        "responses": {
+          "200": {
+            "description": "Succès",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/StockPage"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Erreur (voir code et message)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Erreur (voir code et message)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Erreur (voir code et message)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Erreur (voir code et message)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Erreur (voir code et message)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "413": {
+            "description": "Erreur (voir code et message)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "415": {
+            "description": "Erreur (voir code et message)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Erreur (voir code et message)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Erreur (voir code et message)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "page",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 100000,
+              "default": 1
+            },
+            "description": ""
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 100,
+              "default": 30
+            },
+            "description": ""
+          },
+          {
+            "name": "q",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "maxLength": 100
+            },
+            "description": ""
+          }
+        ]
+      }
+    },
+    "/clients": {
+      "get": {
+        "operationId": "searchClients",
+        "summary": "Rechercher des clients existants",
+        "responses": {
+          "200": {
+            "description": "Succès",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ClientPage"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Erreur (voir code et message)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Erreur (voir code et message)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Erreur (voir code et message)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Erreur (voir code et message)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Erreur (voir code et message)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "413": {
+            "description": "Erreur (voir code et message)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "415": {
+            "description": "Erreur (voir code et message)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Erreur (voir code et message)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Erreur (voir code et message)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "page",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 100000,
+              "default": 1
+            },
+            "description": ""
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 100,
+              "default": 30
+            },
+            "description": ""
+          },
+          {
+            "name": "q",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "maxLength": 100
+            },
+            "description": ""
+          }
+        ]
+      }
+    },
+    "/ventes": {
+      "get": {
+        "operationId": "getMySales",
+        "summary": "Historique personnel",
+        "responses": {
+          "200": {
+            "description": "Succès",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SalesPage"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Erreur (voir code et message)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Erreur (voir code et message)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Erreur (voir code et message)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Erreur (voir code et message)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Erreur (voir code et message)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "413": {
+            "description": "Erreur (voir code et message)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "415": {
+            "description": "Erreur (voir code et message)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Erreur (voir code et message)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Erreur (voir code et message)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "page",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 100000,
+              "default": 1
+            },
+            "description": ""
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 100,
+              "default": 30
+            },
+            "description": ""
+          },
+          {
+            "name": "from",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            },
+            "description": "Borne incluse ; fuseau requis."
+          },
+          {
+            "name": "to",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            },
+            "description": "Borne exclue ; fuseau requis."
+          },
+          {
+            "name": "statut",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "en_cours",
+                "terminee",
+                "annulee"
+              ]
+            },
+            "description": ""
+          }
+        ]
+      },
+      "post": {
+        "operationId": "createSale",
+        "summary": "FV avec prix serveur et caisse ouverte ; conserver requestKey pour le rejeu",
+        "responses": {
+          "201": {
+            "description": "Succès",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SaleResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Erreur (voir code et message)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Erreur (voir code et message)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Erreur (voir code et message)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Erreur (voir code et message)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Erreur (voir code et message)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "413": {
+            "description": "Erreur (voir code et message)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "415": {
+            "description": "Erreur (voir code et message)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Erreur (voir code et message)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Erreur (voir code et message)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "200": {
+            "description": "Rejeu identique : vente existante, aucune relance fiscale.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SaleResponse"
+                }
+              }
+            }
+          },
+          "202": {
+            "description": "Enregistrée, certification non achevée.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SaleResponse"
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SaleInput"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/ventes/{id}": {
+      "get": {
+        "operationId": "getMySale",
+        "summary": "Consulter une vente personnelle",
+        "responses": {
+          "200": {
+            "description": "Succès",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SaleResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Erreur (voir code et message)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Erreur (voir code et message)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Erreur (voir code et message)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Erreur (voir code et message)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Erreur (voir code et message)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "413": {
+            "description": "Erreur (voir code et message)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "415": {
+            "description": "Erreur (voir code et message)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Erreur (voir code et message)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Erreur (voir code et message)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Vente appartenant à l’agent connecté."
+          }
+        ]
+      }
+    },
+    "/ventes/{id}/certification": {
+      "post": {
+        "operationId": "retryMyCertification",
+        "summary": "Relancer seulement en_attente/erreur sans UID",
+        "responses": {
+          "200": {
+            "description": "Succès",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SaleResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Erreur (voir code et message)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Erreur (voir code et message)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Erreur (voir code et message)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Erreur (voir code et message)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Erreur (voir code et message)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "413": {
+            "description": "Erreur (voir code et message)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "415": {
+            "description": "Erreur (voir code et message)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Erreur (voir code et message)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Erreur (voir code et message)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "202": {
+            "description": "Certification non achevée.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SaleResponse"
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Vente appartenant à l’agent connecté."
+          }
+        ]
+      }
+    },
+    "/ventes/{id}/document": {
+      "get": {
+        "operationId": "getMyInvoiceDocument",
+        "summary": "Instantané JSON certifié (pas un PDF)",
+        "responses": {
+          "200": {
+            "description": "Succès",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Document"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Erreur (voir code et message)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Erreur (voir code et message)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Erreur (voir code et message)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Erreur (voir code et message)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Erreur (voir code et message)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "413": {
+            "description": "Erreur (voir code et message)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "415": {
+            "description": "Erreur (voir code et message)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Erreur (voir code et message)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Erreur (voir code et message)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Vente appartenant à l’agent connecté."
+          },
+          {
+            "name": "copie",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "1"
+              ]
+            },
+            "description": ""
+          }
+        ]
+      }
+    },
+    "/caisse": {
+      "get": {
+        "operationId": "getMyCash",
+        "summary": "Caisse courante et historique personnel",
+        "responses": {
+          "200": {
+            "description": "Succès",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CashPage"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Erreur (voir code et message)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Erreur (voir code et message)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Erreur (voir code et message)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Erreur (voir code et message)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Erreur (voir code et message)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "413": {
+            "description": "Erreur (voir code et message)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "415": {
+            "description": "Erreur (voir code et message)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Erreur (voir code et message)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Erreur (voir code et message)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "page",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 100000,
+              "default": 1
+            },
+            "description": ""
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 100,
+              "default": 30
+            },
+            "description": ""
+          }
+        ]
+      },
+      "post": {
+        "operationId": "mutateMyCash",
+        "summary": "Ouvrir, enregistrer un mouvement ou clôturer sa caisse",
+        "responses": {
+          "200": {
+            "description": "Succès",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "oneOf": [
+                    {
+                      "$ref": "#/components/schemas/Cash"
+                    },
+                    {
+                      "$ref": "#/components/schemas/CashMovement"
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Erreur (voir code et message)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Erreur (voir code et message)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Erreur (voir code et message)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Erreur (voir code et message)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Erreur (voir code et message)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "413": {
+            "description": "Erreur (voir code et message)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "415": {
+            "description": "Erreur (voir code et message)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Erreur (voir code et message)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Erreur (voir code et message)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CashAction"
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "MobileBearer": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "opaque pm_ token"
+      }
+    },
+    "schemas": {
+      "Error": {
+        "type": "object",
+        "properties": {
+          "error": {
+            "type": "object",
+            "properties": {
+              "code": {
+                "type": "string"
+              },
+              "message": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "code",
+              "message"
+            ]
+          }
+        },
+        "required": [
+          "error"
+        ]
+      },
+      "User": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "nom": {
+            "type": "string"
+          },
+          "prenom": {
+            "type": "string"
+          },
+          "email": {
+            "type": "string",
+            "format": "email"
+          },
+          "role": {
+            "type": "string",
+            "enum": [
+              "admin",
+              "pharmacien",
+              "vendeur"
+            ]
+          },
+          "modulesSupplementaires": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "nullable": true
+          },
+          "ventesAccess": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "nullable": true
+          }
+        },
+        "required": [
+          "id",
+          "nom",
+          "prenom",
+          "email",
+          "role"
+        ]
+      },
+      "Login": {
+        "type": "object",
+        "properties": {
+          "email": {
+            "type": "string",
+            "maxLength": 254
+          },
+          "motDePasse": {
+            "type": "string",
+            "maxLength": 1024,
+            "format": "password"
+          },
+          "appareil": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 100
+          }
+        },
+        "required": [
+          "email",
+          "motDePasse",
+          "appareil"
+        ]
+      },
+      "Token": {
+        "type": "object",
+        "properties": {
+          "accessToken": {
+            "type": "string"
+          },
+          "tokenType": {
+            "type": "string",
+            "enum": [
+              "Bearer"
+            ]
+          },
+          "expiresIn": {
+            "type": "integer",
+            "enum": [
+              28800
+            ]
+          },
+          "expiresAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "utilisateur": {
+            "$ref": "#/components/schemas/User"
+          }
+        },
+        "required": [
+          "accessToken",
+          "tokenType",
+          "expiresIn",
+          "expiresAt",
+          "utilisateur"
+        ]
+      },
+      "Me": {
+        "type": "object",
+        "properties": {
+          "utilisateur": {
+            "$ref": "#/components/schemas/User"
+          },
+          "session": {
+            "type": "object",
+            "properties": {
+              "appareil": {
+                "type": "string"
+              },
+              "expiresAt": {
+                "type": "string",
+                "format": "date-time"
+              }
+            }
+          }
+        },
+        "required": [
+          "utilisateur",
+          "session"
+        ]
+      },
+      "StockSummary": {
+        "type": "object",
+        "properties": {
+          "disponible": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "reserve": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "bloque": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "perime": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "aQualifier": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "total": {
+            "type": "integer",
+            "minimum": 0
+          }
+        },
+        "required": [
+          "disponible",
+          "reserve",
+          "bloque",
+          "perime",
+          "aQualifier",
+          "total"
+        ]
+      },
+      "Pack": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "medicamentId": {
+            "type": "string"
+          },
+          "nom": {
+            "type": "string"
+          },
+          "facteur": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "prixVente": {
+            "type": "number",
+            "description": "Montant FCFA, sans facteur 100."
+          },
+          "codeBarres": {
+            "type": "string",
+            "nullable": true
+          },
+          "actif": {
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "id",
+          "nom",
+          "facteur",
+          "prixVente"
+        ]
+      },
+      "Product": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "nom": {
+            "type": "string"
+          },
+          "prix": {
+            "type": "number",
+            "description": "Montant FCFA, sans facteur 100."
+          },
+          "codeBarres": {
+            "type": "string",
+            "nullable": true
+          },
+          "dosage": {
+            "type": "string",
+            "nullable": true
+          },
+          "forme": {
+            "type": "string"
+          },
+          "prescription": {
+            "type": "boolean"
+          },
+          "groupeTaxation": {
+            "type": "string"
+          },
+          "seuilAlerte": {
+            "type": "integer"
+          },
+          "conditionnements": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Pack"
+            }
+          },
+          "stock": {
+            "$ref": "#/components/schemas/StockSummary"
+          }
+        },
+        "required": [
+          "id",
+          "nom",
+          "prix",
+          "conditionnements",
+          "stock"
+        ]
+      },
+      "Client": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "nom": {
+            "type": "string"
+          },
+          "prenom": {
+            "type": "string"
+          },
+          "nif": {
+            "type": "string",
+            "nullable": true
+          },
+          "telephone": {
+            "type": "string",
+            "nullable": true
+          },
+          "adresse": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "required": [
+          "id",
+          "nom",
+          "prenom"
+        ]
+      },
+      "SaleLineInput": {
+        "type": "object",
+        "properties": {
+          "medicamentId": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 200
+          },
+          "conditionnementId": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 200
+          },
+          "quantite": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 1000000
+          }
+        },
+        "required": [
+          "medicamentId",
+          "quantite"
+        ],
+        "additionalProperties": false
+      },
+      "SaleInput": {
+        "type": "object",
+        "properties": {
+          "requestKey": {
+            "type": "string",
+            "minLength": 16,
+            "maxLength": 100,
+            "pattern": "^[A-Za-z0-9_-]{16,100}$"
+          },
+          "clientId": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 200
+          },
+          "methodePaiement": {
+            "type": "string",
+            "enum": [
+              "especes",
+              "carte",
+              "cheque",
+              "virement"
+            ]
+          },
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/SaleLineInput"
+            },
+            "minItems": 1,
+            "maxItems": 100
+          }
+        },
+        "required": [
+          "requestKey",
+          "methodePaiement",
+          "items"
+        ],
+        "additionalProperties": false
+      },
+      "Invoice": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "statut": {
+            "type": "string",
+            "description": "Statut fiscal ; a_rapprocher ou un UID existant interdit la relance automatique."
+          },
+          "uid": {
+            "type": "string",
+            "nullable": true
+          },
+          "codeSECeFDGI": {
+            "type": "string",
+            "nullable": true
+          },
+          "qrCode": {
+            "type": "string",
+            "nullable": true
+          },
+          "dateTimeCertification": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "counters": {
+            "type": "string",
+            "nullable": true
+          },
+          "errorDescription": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "required": [
+          "id",
+          "statut"
+        ]
+      },
+      "SaleLine": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "venteId": {
+            "type": "string"
+          },
+          "medicamentId": {
+            "type": "string",
+            "nullable": true
+          },
+          "libelle": {
+            "type": "string",
+            "nullable": true
+          },
+          "quantite": {
+            "type": "integer"
+          },
+          "prixUnitaire": {
+            "type": "number",
+            "description": "Montant FCFA, sans facteur 100."
+          },
+          "sousTotal": {
+            "type": "number",
+            "description": "Montant FCFA, sans facteur 100."
+          },
+          "groupeTaxation": {
+            "type": "string"
+          },
+          "facteurStock": {
+            "type": "integer"
+          },
+          "conditionnementId": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "required": [
+          "id",
+          "quantite",
+          "prixUnitaire",
+          "sousTotal"
+        ]
+      },
+      "Payment": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "venteId": {
+            "type": "string"
+          },
+          "caisseId": {
+            "type": "string",
+            "nullable": true
+          },
+          "mode": {
+            "type": "string"
+          },
+          "montant": {
+            "type": "integer",
+            "description": "FCFA signé ; avoir négatif."
+          },
+          "date": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "Sale": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "numeroFacture": {
+            "type": "string"
+          },
+          "date": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "clientId": {
+            "type": "string",
+            "nullable": true
+          },
+          "client": {
+            "nullable": true,
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/Client"
+              }
+            ]
+          },
+          "operateurId": {
+            "type": "string",
+            "nullable": true
+          },
+          "vendeur": {
+            "type": "string"
+          },
+          "caisseId": {
+            "type": "string",
+            "nullable": true
+          },
+          "statut": {
+            "type": "string",
+            "enum": [
+              "en_cours",
+              "terminee",
+              "annulee"
+            ]
+          },
+          "typeFacture": {
+            "type": "string"
+          },
+          "sousTotal": {
+            "type": "number",
+            "description": "Montant FCFA, sans facteur 100."
+          },
+          "tva": {
+            "type": "number",
+            "description": "Montant FCFA, sans facteur 100."
+          },
+          "total": {
+            "type": "number",
+            "description": "Montant FCFA, sans facteur 100."
+          },
+          "remise": {
+            "type": "number",
+            "description": "Montant FCFA, sans facteur 100."
+          },
+          "methodePaiement": {
+            "type": "string"
+          },
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/SaleLine"
+            }
+          },
+          "factureESECeF": {
+            "nullable": true,
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/Invoice"
+              }
+            ]
+          },
+          "encaissement": {
+            "nullable": true,
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/Payment"
+              }
+            ]
+          },
+          "documentUrl": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "required": [
+          "id",
+          "numeroFacture",
+          "statut",
+          "operateurId",
+          "items",
+          "factureESECeF",
+          "documentUrl"
+        ]
+      },
+      "SaleResponse": {
+        "type": "object",
+        "properties": {
+          "vente": {
+            "$ref": "#/components/schemas/Sale"
+          },
+          "replayed": {
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "vente"
+        ]
+      },
+      "CashSummary": {
+        "type": "object",
+        "properties": {
+          "byMode": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "number",
+              "description": "Montant FCFA, sans facteur 100."
+            }
+          },
+          "deposits": {
+            "type": "number",
+            "description": "Montant FCFA, sans facteur 100."
+          },
+          "withdrawals": {
+            "type": "number",
+            "description": "Montant FCFA, sans facteur 100."
+          },
+          "expected": {
+            "type": "number",
+            "description": "Montant FCFA, sans facteur 100."
+          }
+        },
+        "required": [
+          "byMode",
+          "deposits",
+          "withdrawals",
+          "expected"
+        ]
+      },
+      "CashMovement": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "caisseId": {
+            "type": "string"
+          },
+          "cle": {
+            "type": "string"
+          },
+          "type": {
+            "type": "string",
+            "enum": [
+              "entree",
+              "sortie"
+            ]
+          },
+          "montant": {
+            "type": "integer"
+          },
+          "motif": {
+            "type": "string"
+          },
+          "date": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "Cash": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "utilisateurId": {
+            "type": "string"
+          },
+          "utilisateur": {
+            "type": "string"
+          },
+          "statut": {
+            "type": "string",
+            "enum": [
+              "ouverte",
+              "cloturee"
+            ]
+          },
+          "fondOuverture": {
+            "type": "integer"
+          },
+          "montantCompte": {
+            "type": "integer",
+            "nullable": true
+          },
+          "montantAttendu": {
+            "type": "integer",
+            "nullable": true
+          },
+          "ecart": {
+            "type": "integer",
+            "nullable": true
+          },
+          "motifEcart": {
+            "type": "string",
+            "nullable": true
+          },
+          "dateOuverture": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "dateCloture": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "encaissements": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Payment"
+            }
+          },
+          "mouvements": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CashMovement"
+            }
+          },
+          "summary": {
+            "$ref": "#/components/schemas/CashSummary"
+          }
+        },
+        "required": [
+          "id",
+          "utilisateurId",
+          "statut",
+          "fondOuverture"
+        ]
+      },
+      "OpenCash": {
+        "type": "object",
+        "properties": {
+          "action": {
+            "type": "string",
+            "enum": [
+              "ouvrir"
+            ]
+          },
+          "montant": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 1000000000
+          }
+        },
+        "required": [
+          "action",
+          "montant"
+        ]
+      },
+      "MoveCash": {
+        "type": "object",
+        "properties": {
+          "action": {
+            "type": "string",
+            "enum": [
+              "mouvement"
+            ]
+          },
+          "id": {
+            "type": "string"
+          },
+          "cle": {
+            "type": "string",
+            "minLength": 16,
+            "maxLength": 100,
+            "pattern": "^[A-Za-z0-9_-]{16,100}$"
+          },
+          "type": {
+            "type": "string",
+            "enum": [
+              "entree",
+              "sortie"
+            ]
+          },
+          "montant": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 1000000000
+          },
+          "motif": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 1000
+          }
+        },
+        "required": [
+          "action",
+          "id",
+          "cle",
+          "type",
+          "montant",
+          "motif"
+        ]
+      },
+      "CloseCash": {
+        "type": "object",
+        "properties": {
+          "action": {
+            "type": "string",
+            "enum": [
+              "cloturer"
+            ]
+          },
+          "id": {
+            "type": "string"
+          },
+          "montant": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 1000000000
+          },
+          "motif": {
+            "type": "string",
+            "maxLength": 1000,
+            "description": "Requis en cas d’écart."
+          }
+        },
+        "required": [
+          "action",
+          "id",
+          "montant"
+        ]
+      },
+      "CashAction": {
+        "oneOf": [
+          {
+            "$ref": "#/components/schemas/OpenCash"
+          },
+          {
+            "$ref": "#/components/schemas/MoveCash"
+          },
+          {
+            "$ref": "#/components/schemas/CloseCash"
+          }
+        ],
+        "discriminator": {
+          "propertyName": "action",
+          "mapping": {
+            "ouvrir": "#/components/schemas/OpenCash",
+            "mouvement": "#/components/schemas/MoveCash",
+            "cloturer": "#/components/schemas/CloseCash"
+          }
+        }
+      },
+      "Situation": {
+        "type": "object",
+        "properties": {
+          "operateurId": {
+            "type": "string"
+          },
+          "periode": {
+            "type": "object",
+            "properties": {
+              "from": {
+                "type": "string",
+                "format": "date-time",
+                "nullable": true
+              },
+              "to": {
+                "type": "string",
+                "format": "date-time",
+                "nullable": true
+              }
+            }
+          },
+          "ventesParStatut": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "statut": {
+                  "type": "string"
+                },
+                "nombre": {
+                  "type": "integer"
+                }
+              }
+            }
+          },
+          "ventesCertifiees": {
+            "type": "object",
+            "properties": {
+              "nombre": {
+                "type": "integer"
+              },
+              "total": {
+                "type": "number",
+                "description": "Montant FCFA, sans facteur 100."
+              },
+              "montantVentes": {
+                "type": "number"
+              },
+              "montantAvoirs": {
+                "type": "number"
+              }
+            }
+          },
+          "encaissementsParMode": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "mode": {
+                  "type": "string"
+                },
+                "montant": {
+                  "type": "number",
+                  "description": "Montant FCFA, sans facteur 100."
+                },
+                "nombre": {
+                  "type": "integer"
+                }
+              }
+            }
+          }
+        },
+        "required": [
+          "operateurId",
+          "periode",
+          "ventesParStatut",
+          "ventesCertifiees",
+          "encaissementsParMode"
+        ]
+      },
+      "Document": {
+        "type": "object",
+        "properties": {
+          "environnement": {
+            "type": "string"
+          },
+          "pharmacieName": {
+            "type": "string"
+          },
+          "raisonSociale": {
+            "type": "string"
+          },
+          "nif": {
+            "type": "string"
+          },
+          "rccm": {
+            "type": "string"
+          },
+          "adresse": {
+            "type": "string"
+          },
+          "telephone": {
+            "type": "string"
+          },
+          "email": {
+            "type": "string"
+          },
+          "boitePostale": {
+            "type": "string"
+          },
+          "modePrix": {
+            "type": "string"
+          },
+          "commentaires": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "isf": {
+            "type": "string"
+          },
+          "typeFacture": {
+            "type": "string"
+          },
+          "numeroFacture": {
+            "type": "string"
+          },
+          "isCopie": {
+            "type": "boolean"
+          },
+          "referenceFactureOriginale": {
+            "type": "string"
+          },
+          "operateur": {
+            "type": "string"
+          },
+          "client": {
+            "type": "object",
+            "properties": {
+              "nom": {
+                "type": "string"
+              },
+              "nif": {
+                "type": "string"
+              },
+              "adresse": {
+                "type": "string"
+              },
+              "contact": {
+                "type": "string"
+              }
+            }
+          },
+          "dateEtablissement": {
+            "type": "string"
+          },
+          "items": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "nom": {
+                  "type": "string"
+                },
+                "code": {
+                  "type": "string"
+                },
+                "quantite": {
+                  "type": "number"
+                },
+                "prixUnitaire": {
+                  "type": "number",
+                  "description": "Montant FCFA, sans facteur 100."
+                },
+                "montant": {
+                  "type": "number",
+                  "description": "Montant FCFA, sans facteur 100."
+                },
+                "groupeTaxation": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "totauxParGroupe": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "object",
+              "properties": {
+                "totalHT": {
+                  "type": "number",
+                  "description": "Montant FCFA, sans facteur 100."
+                },
+                "totalTVA": {
+                  "type": "number",
+                  "description": "Montant FCFA, sans facteur 100."
+                },
+                "tauxTVA": {
+                  "type": "number"
+                },
+                "totalTS": {
+                  "type": "number",
+                  "description": "Montant FCFA, sans facteur 100."
+                }
+              }
+            }
+          },
+          "totalTVA": {
+            "type": "number",
+            "description": "Montant FCFA, sans facteur 100."
+          },
+          "totalTTC": {
+            "type": "number",
+            "description": "Montant FCFA, sans facteur 100."
+          },
+          "isbTotal": {
+            "type": "number",
+            "description": "Montant FCFA, sans facteur 100."
+          },
+          "isbTaux": {
+            "type": "string"
+          },
+          "taxeSpecifiqueTotal": {
+            "type": "number",
+            "description": "Montant FCFA, sans facteur 100."
+          },
+          "paiements": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "additionalProperties": true
+            }
+          },
+          "securityElements": {
+            "type": "object",
+            "properties": {
+              "codeSECeFDGI": {
+                "type": "string"
+              },
+              "nim": {
+                "type": "string"
+              },
+              "compteurs": {
+                "type": "string"
+              },
+              "dateHeure": {
+                "type": "string"
+              },
+              "qrCodeData": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "codeSECeFDGI",
+              "nim",
+              "compteurs",
+              "dateHeure",
+              "qrCodeData"
+            ]
+          }
+        },
+        "required": [
+          "numeroFacture",
+          "items",
+          "totalTVA",
+          "totalTTC",
+          "securityElements"
+        ]
+      },
+      "StockPage": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Product"
+            }
+          },
+          "total": {
+            "type": "integer"
+          },
+          "page": {
+            "type": "integer"
+          },
+          "limit": {
+            "type": "integer"
+          }
+        },
+        "required": [
+          "data",
+          "total",
+          "page",
+          "limit"
+        ]
+      },
+      "ClientPage": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Client"
+            }
+          },
+          "total": {
+            "type": "integer"
+          },
+          "page": {
+            "type": "integer"
+          },
+          "limit": {
+            "type": "integer"
+          }
+        },
+        "required": [
+          "data",
+          "total",
+          "page",
+          "limit"
+        ]
+      },
+      "SalesPage": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Sale"
+            }
+          },
+          "total": {
+            "type": "integer"
+          },
+          "page": {
+            "type": "integer"
+          },
+          "limit": {
+            "type": "integer"
+          }
+        },
+        "required": [
+          "data",
+          "total",
+          "page",
+          "limit"
+        ]
+      },
+      "CashPage": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Cash"
+            }
+          },
+          "total": {
+            "type": "integer"
+          },
+          "page": {
+            "type": "integer"
+          },
+          "limit": {
+            "type": "integer"
+          },
+          "current": {
+            "nullable": true,
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/Cash"
+              }
+            ]
+          }
+        },
+        "required": [
+          "data",
+          "total",
+          "page",
+          "limit",
+          "current"
+        ]
+      }
+    }
+  }
+}
